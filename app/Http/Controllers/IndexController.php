@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Buku;
 
 class IndexController extends Controller
 {
     public function index()
     {
-        return view('index.index');
+        $buku = Buku::all(); // ambil semua buku
+
+        return view('frontend.index.index', compact('buku'));
     }
 }
