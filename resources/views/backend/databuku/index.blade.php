@@ -48,7 +48,7 @@
 
                             {{-- Data --}}
                             <td>{{ $item->kode_buku }}</td>
-                            <td class="text-start">{{ $item->judul }}</td>
+                            <td class="text-center">{{ $item->judul }}</td>
                             <td>{{ $item->kategori }}</td>
 
                             {{-- Status --}}
@@ -60,7 +60,7 @@
                                     <span class="badge bg-danger">Habis</span>
 
                                 @else
-                                    <span class="badge bg-warning text-dark">Dipinjam</span>
+                                    <span class="badge bg-danger">Habis</span>
                                 @endif
                             </td>
 

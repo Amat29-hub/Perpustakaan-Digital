@@ -34,6 +34,29 @@
 
 <script src="{{ asset('assetsfrontend/js/plugins.js') }}"></script>
 <script src="{{ asset('assetsfrontend/js/script.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if(session('success'))
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil',
+    text: '{{ session('success') }}',
+    confirmButtonColor: '#0f8f6f'
+})
+</script>
+@endif
+
+@if(session('error'))
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Oops...',
+    text: '{{ session('error') }}',
+    confirmButtonColor: '#d33'
+})
+</script>
+@endif
 
 </body>
 </html>

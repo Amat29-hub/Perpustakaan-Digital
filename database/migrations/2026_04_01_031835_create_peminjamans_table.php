@@ -7,34 +7,106 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations
      */
     public function up(): void
     {
         Schema::create('peminjamans', function (Blueprint $table) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRIMARY KEY
+            |--------------------------------------------------------------------------
+            */
+
             $table->id('id_peminjaman');
-        
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RELASI
+            |--------------------------------------------------------------------------
+            */
+
             $table->unsignedBigInteger('id_anggota');
-            $table->unsignedBigInteger('id_petugas');
+            $table->unsignedBigInteger('id_petugas')->nullable();
             $table->unsignedBigInteger('id_buku');
-        
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TANGGAL PEMINJAMAN
+            |--------------------------------------------------------------------------
+            */
+
             $table->date('tanggal_pinjam');
             $table->date('tanggal_jatuh_tempo');
             $table->date('tanggal_kembali')->nullable();
-        
-            $table->double('denda')->default(0);
-            $table->string('status');
-        
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | DENDA
+            |--------------------------------------------------------------------------
+            */
+
+            $table->integer('denda')->default(0);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS PEMINJAMAN
+            |--------------------------------------------------------------------------
+            */
+
+            $table->enum('status', [
+                'menunggu',
+                'dipinjam',
+                'terlambat',
+                'dikembalikan',
+                'ditolak'
+            ])->default('menunggu');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TIMESTAMP
+            |--------------------------------------------------------------------------
+            */
+
             $table->timestamps();
-        
-            $table->foreign('id_anggota')->references('id_anggota')->on('anggotas')->cascadeOnDelete();
-            $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->cascadeOnDelete();
-            $table->foreign('id_buku')->references('id_buku')->on('bukus')->cascadeOnDelete();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | FOREIGN KEY
+            |--------------------------------------------------------------------------
+            */
+
+            // Anggota
+            $table->foreign('id_anggota')
+                ->references('id_anggota')
+                ->on('anggotas')
+                ->cascadeOnDelete();
+
+            // Petugas
+            $table->foreign('id_petugas')
+                ->references('id_petugas')
+                ->on('petugas')
+                ->nullOnDelete();
+
+            // Buku
+            $table->foreign('id_buku')
+                ->references('id_buku')
+                ->on('bukus')
+                ->cascadeOnDelete();
+
         });
     }
 
+
     /**
-     * Reverse the migrations.
+     * Reverse the migrations
      */
     public function down(): void
     {

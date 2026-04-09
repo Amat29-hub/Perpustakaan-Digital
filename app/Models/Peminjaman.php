@@ -17,7 +17,17 @@ class Peminjaman extends Model
         'tanggal_jatuh_tempo',
         'tanggal_kembali',
         'denda',
-        'status'
+        'status',
+
+        // TAMBAHKAN INI
+        'status_bayar',
+        'metode_bayar'
+    ];
+
+    protected $casts = [
+        'tanggal_pinjam' => 'datetime',
+        'tanggal_jatuh_tempo' => 'datetime',
+        'tanggal_kembali' => 'datetime',
     ];
 
     public function anggota()

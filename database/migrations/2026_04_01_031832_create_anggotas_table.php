@@ -12,14 +12,41 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('anggotas', function (Blueprint $table) {
+
             $table->id('id_anggota');
+
+            // relasi ke tabel users
+            $table->unsignedBigInteger('user_id')->unique();
+
+            // kode anggota otomatis
+            $table->string('kode_anggota')->unique();
+
+            // data utama
             $table->string('nama');
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
             $table->string('password');
-            $table->text('alamat');
-            $table->string('no_telp');
-            $table->boolean('status_aktif')->default(true);
+
+            // tambahan
+            $table->string('kelas')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
+
+            // kontak
+            $table->text('alamat')->nullable();
+            $table->string('no_telp')->nullable();
+
+            // foto
+            $table->string('foto')->nullable();
+
+            // status
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+
             $table->timestamps();
+
+            // foreign key
+            $table->foreign('user_id')
+                  ->references('id')
+                  ->on('users')
+                  ->cascadeOnDelete();
         });
     }
 

@@ -1,266 +1,148 @@
 @extends('backend.layout.app')
 
 @section('content')
+<div class="container-fluid pt-4 px-4">
 
-    <!-- Sale & Revenue Start -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="row g-4">
+    <div class="row g-4">
 
-            <div class="col-sm-6 col-xl-3">
-                <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-line fa-3x text-primary"></i>
-                    <div class="ms-3">
-                        <p class="mb-2">Today Sale</p>
-                        <h6 class="mb-0">$1234</h6>
-                    </div>
+        {{-- TOTAL BUKU --}}
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center p-4">
+                <i class="fa fa-book fa-3x text-danger"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Total Buku</p>
+                    <h4 class="mb-0">{{ $totalBuku }}</h4>
                 </div>
             </div>
+        </div>
 
-            <div class="col-sm-6 col-xl-3">
-                <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                    <div class="ms-3">
-                        <p class="mb-2">Total Sale</p>
-                        <h6 class="mb-0">$1234</h6>
-                    </div>
+        {{-- TOTAL ANGGOTA --}}
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center p-4">
+                <i class="fa fa-users fa-3x text-danger"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Total Anggota</p>
+                    <h4 class="mb-0">{{ $totalAnggota }}</h4>
                 </div>
             </div>
+        </div>
 
-            <div class="col-sm-6 col-xl-3">
-                <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-area fa-3x text-primary"></i>
-                    <div class="ms-3">
-                        <p class="mb-2">Today Revenue</p>
-                        <h6 class="mb-0">$1234</h6>
-                    </div>
+        {{-- PEMINJAMAN AKTIF --}}
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center p-4">
+                <i class="fa fa-book-reader fa-3x text-danger"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Peminjaman Aktif</p>
+                    <h4 class="mb-0">{{ $peminjamanAktif }}</h4>
                 </div>
             </div>
+        </div>
 
-            <div class="col-sm-6 col-xl-3">
-                <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-pie fa-3x text-primary"></i>
-                    <div class="ms-3">
-                        <p class="mb-2">Total Revenue</p>
-                        <h6 class="mb-0">$1234</h6>
-                    </div>
+        {{-- TOTAL DENDA --}}
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center p-4">
+                <i class="fa fa-money-bill-wave fa-3x text-danger"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Total Denda</p>
+                    <h4 class="mb-0">
+                        Rp {{ number_format($totalDenda, 0, ',', '.') }}
+                    </h4>
                 </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- PEMINJAMAN TERBARU --}}
+    <div class="row mt-4">
+        <div class="col-12">
+
+            <div class="bg-secondary rounded p-4">
+
+                <div class="d-flex justify-content-between mb-3">
+                    <h5>📖 Peminjaman Terbaru</h5>
+                    <a href="{{ route('admin.peminjaman.index') }}" class="btn btn-danger btn-sm">
+                        Lihat Semua
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-bordered text-center align-middle">
+
+                        <thead>
+                            <tr>
+                                <th width="50">No</th>
+                                <th>Tanggal</th>
+                                <th>No Peminjaman</th>
+                                <th>Anggota</th>
+                                <th>Buku</th>
+                                <th>Status</th>
+                                <th width="120">Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse($peminjamanTerbaru as $item)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+
+                                    <td>
+                                        {{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}
+                                    </td>
+
+                                    <td>
+                                        <span class="text-info">
+                                            PMJ-{{ str_pad($item->id_peminjaman, 4, '0', STR_PAD_LEFT) }}
+                                        </span>
+                                    </td>
+
+                                    <td>{{ $item->anggota->nama ?? '-' }}</td>
+                                    <td>{{ $item->buku->judul ?? '-' }}</td>
+
+                                    <td>
+                                        {{-- STATUS --}}
+                                        @if($item->status == 'menunggu')
+                                            <span class="badge bg-warning text-dark">Menunggu</span>
+
+                                        @elseif($item->status == 'dipinjam')
+                                            @if(\Carbon\Carbon::parse($item->tanggal_jatuh_tempo)->isPast())
+                                                <span class="badge bg-danger">Terlambat</span>
+                                            @else
+                                                <span class="badge bg-success">Dipinjam</span>
+                                            @endif
+
+                                        @elseif($item->status == 'dikembalikan')
+                                            <span class="badge bg-primary">Dikembalikan</span>
+
+                                        @elseif($item->status == 'ditolak')
+                                            <span class="badge bg-secondary">Ditolak</span>
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        <a 
+                                            href="{{ route('admin.peminjaman.show',$item->id_peminjaman) }}"
+                                            class="btn btn-info btn-sm">
+                                            Detail
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        Belum ada peminjaman
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+
+                    </table>
+                </div>
+
             </div>
 
         </div>
     </div>
-    <!-- Sale & Revenue End -->
 
-
-    <!-- Sales Chart Start -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="row g-4">
-
-            <div class="col-sm-12 col-xl-6">
-                <div class="bg-secondary text-center rounded p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Worldwide Sales</h6>
-                        <a href="">Show All</a>
-                    </div>
-                    <canvas id="worldwide-sales"></canvas>
-                </div>
-            </div>
-
-            <div class="col-sm-12 col-xl-6">
-                <div class="bg-secondary text-center rounded p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Salse & Revenue</h6>
-                        <a href="">Show All</a>
-                    </div>
-                    <canvas id="salse-revenue"></canvas>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <!-- Sales Chart End -->
-
-
-    <!-- Recent Sales Start -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="bg-secondary text-center rounded p-4">
-
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="mb-0">Recent Salse</h6>
-                <a href="">Show All</a>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table text-start align-middle table-bordered table-hover mb-0">
-
-                    <thead>
-                        <tr class="text-white">
-                            <th scope="col">
-                                <input class="form-check-input" type="checkbox">
-                            </th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Invoice</th>
-                            <th scope="col">Customer</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Paid</td>
-                            <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                        </tr>
-
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Paid</td>
-                            <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                        </tr>
-
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Paid</td>
-                            <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                        </tr>
-
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Paid</td>
-                            <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                        </tr>
-
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Paid</td>
-                            <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
-
-        </div>
-    </div>
-    <!-- Recent Sales End -->
-
-
-    <!-- Widgets Start -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="row g-4">
-
-            <!-- Messages -->
-            <div class="col-sm-12 col-md-6 col-xl-4">
-                <div class="h-100 bg-secondary rounded p-4">
-
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h6 class="mb-0">Messages</h6>
-                        <a href="">Show All</a>
-                    </div>
-
-                    <div class="d-flex align-items-center border-bottom py-3">
-                        <img class="rounded-circle flex-shrink-0" src="img/user.jpg" style="width: 40px; height: 40px;">
-                        <div class="w-100 ms-3">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-0">Jhon Doe</h6>
-                                <small>15 minutes ago</small>
-                            </div>
-                            <span>Short message goes here...</span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center border-bottom py-3">
-                        <img class="rounded-circle flex-shrink-0" src="img/user.jpg" style="width: 40px; height: 40px;">
-                        <div class="w-100 ms-3">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-0">Jhon Doe</h6>
-                                <small>15 minutes ago</small>
-                            </div>
-                            <span>Short message goes here...</span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center border-bottom py-3">
-                        <img class="rounded-circle flex-shrink-0" src="img/user.jpg" style="width: 40px; height: 40px;">
-                        <div class="w-100 ms-3">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-0">Jhon Doe</h6>
-                                <small>15 minutes ago</small>
-                            </div>
-                            <span>Short message goes here...</span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center pt-3">
-                        <img class="rounded-circle flex-shrink-0" src="img/user.jpg" style="width: 40px; height: 40px;">
-                        <div class="w-100 ms-3">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-0">Jhon Doe</h6>
-                                <small>15 minutes ago</small>
-                            </div>
-                            <span>Short message goes here...</span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Calendar -->
-            <div class="col-sm-12 col-md-6 col-xl-4">
-                <div class="h-100 bg-secondary rounded p-4">
-
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Calender</h6>
-                        <a href="">Show All</a>
-                    </div>
-
-                    <div id="calender"></div>
-
-                </div>
-            </div>
-
-            <!-- To Do List -->
-            <div class="col-sm-12 col-md-6 col-xl-4">
-                <div class="h-100 bg-secondary rounded p-4">
-
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">To Do List</h6>
-                        <a href="">Show All</a>
-                    </div>
-
-                    <div class="d-flex mb-2">
-                        <input class="form-control bg-dark border-0" type="text" placeholder="Enter task">
-                        <button class="btn btn-primary ms-2">Add</button>
-                    </div>
-
-                    <!-- (semua task tetap sama, tidak diubah) -->
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <!-- Widgets End -->
-
+</div>
 @endsection

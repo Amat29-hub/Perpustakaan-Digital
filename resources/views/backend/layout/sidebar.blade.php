@@ -82,12 +82,7 @@
 
                     <a href="{{ url('/admin/peminjaman') }}" 
                        class="dropdown-item {{ request()->is('admin/peminjaman*') ? 'active' : '' }}">
-                        Peminjaman
-                    </a>
-
-                    <a href="{{ url('/admin/pengembalian') }}" 
-                       class="dropdown-item {{ request()->is('admin/pengembalian*') ? 'active' : '' }}">
-                        Pengembalian
+                        Peminjaman  
                     </a>
 
                 </div>
