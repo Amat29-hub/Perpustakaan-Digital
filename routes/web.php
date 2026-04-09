@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\BukuController;
 use App\Http\Controllers\Backend\AnggotaController;
 use App\Http\Controllers\Backend\PetugasController;
 use App\Http\Controllers\Backend\PeminjamanController;
+use App\Http\Controllers\Backend\LaporanController;
 
 
 /*
@@ -240,5 +241,32 @@ Route::prefix('admin')
         'peminjaman/{id}/terlambat',
         [PeminjamanController::class,'terlambat']
     )->name('peminjaman.terlambat');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LAPORAN
+    |--------------------------------------------------------------------------
+    */
+    
+    Route::get(
+        'laporan/peminjaman',
+        [LaporanController::class,'peminjaman']
+    )->name('laporan.peminjaman');
+    
+    Route::get(
+        'laporan/pengembalian',
+        [LaporanController::class,'pengembalian']
+    )->name('laporan.pengembalian');
+
+    Route::get(
+        'laporan/peminjaman/cetak',
+        [LaporanController::class,'cetakPeminjaman']
+    )->name('laporan.peminjaman.cetak');
+
+    Route::get(
+        'laporan/pengembalian/cetak',
+        [LaporanController::class,'cetakPengembalian']
+    )->name('laporan.pengembalian.cetak');
 
 });

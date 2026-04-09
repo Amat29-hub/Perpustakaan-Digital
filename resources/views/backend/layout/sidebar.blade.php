@@ -102,13 +102,13 @@
                 <div class="dropdown-menu bg-transparent border-0 
                     {{ request()->is('admin/laporan-peminjaman*') || request()->is('admin/laporan-pengembalian*') ? 'show' : '' }}">
 
-                    <a href="{{ url('/admin/laporan-peminjaman') }}" 
-                       class="dropdown-item {{ request()->is('admin/laporan-peminjaman*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.laporan.peminjaman') }}" 
+                       class="dropdown-item {{ request()->is('admin/laporan/peminjaman*') ? 'active' : '' }}">
                         Laporan Peminjaman
                     </a>
 
-                    <a href="{{ url('/admin/laporan-pengembalian') }}" 
-                       class="dropdown-item {{ request()->is('admin/laporan-pengembalian*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.laporan.pengembalian') }}" 
+                       class="dropdown-item {{ request()->is('admin/laporan/pengembalian*') ? 'active' : '' }}">
                         Laporan Pengembalian
                     </a>
 

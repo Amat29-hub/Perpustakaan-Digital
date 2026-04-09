@@ -3,62 +3,99 @@
 @section('content')
 <div class="container-fluid pt-4 px-4">
 
-    {{-- HEADER --}}
-    <div class="mb-4">
-        <h4 class="text-white">
-            <i class="fa fa-chart-line text-danger"></i> Dashboard Perpustakaan
-        </h4>
-        <p class="text-muted mb-0">
-            Ringkasan data sistem perpustakaan
-        </p>
+    {{-- FILTER TANGGAL --}}
+    <div class="bg-secondary rounded p-4 mb-4">
+        <form method="GET" action="{{ route('admin.laporan.peminjaman') }}">
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+                    <label class="form-label">Tanggal Awal</label>
+                    <input 
+                        type="date"
+                        name="tanggal_awal"
+                        value="{{ $tanggal_awal ?? '' }}"
+                        class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Tanggal Akhir</label>
+                    <input 
+                        type="date"
+                        name="tanggal_akhir"
+                        value="{{ $tanggal_akhir ?? '' }}"
+                        class="form-control">
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-danger w-100">
+                        <i class="fa fa-search"></i> Tampilkan
+                    </button>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="{{ route('admin.laporan.peminjaman') }}" class="btn btn-dark w-100">
+                        Reset
+                    </a>
+                </div>
+
+                {{-- TOMBOL CETAK --}}
+                <div class="col-md-2">
+                    <a 
+                        href="{{ route('admin.laporan.peminjaman.cetak',[
+                            'tanggal_awal'=>$tanggal_awal,
+                            'tanggal_akhir'=>$tanggal_akhir
+                        ]) }}"
+                        target="_blank"
+                        class="btn btn-success w-100">
+
+                        <i class="fa fa-print"></i> Cetak
+                    </a>
+                </div>
+
+            </div>
+        </form>
     </div>
 
 
     {{-- CARD STATISTIK --}}
     <div class="row g-4">
 
-        {{-- TOTAL BUKU --}}
         <div class="col-sm-6 col-xl-3">
             <div class="bg-secondary rounded d-flex align-items-center p-4">
                 <i class="fa fa-book fa-3x text-danger"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Total Buku</p>
-                    <h4 class="mb-0">{{ $totalBuku }}</h4>
+                    <p class="mb-2">Total Transaksi</p>
+                    <h4 class="mb-0">{{ $totalTransaksi ?? 0 }}</h4>
                 </div>
             </div>
         </div>
 
-        {{-- TOTAL ANGGOTA --}}
         <div class="col-sm-6 col-xl-3">
             <div class="bg-secondary rounded d-flex align-items-center p-4">
                 <i class="fa fa-users fa-3x text-danger"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Total Anggota</p>
-                    <h4 class="mb-0">{{ $totalAnggota }}</h4>
+                    <p class="mb-2">Anggota Aktif</p>
+                    <h4 class="mb-0">{{ $anggotaAktif ?? 0 }}</h4>
                 </div>
             </div>
         </div>
 
-        {{-- PEMINJAMAN AKTIF --}}
         <div class="col-sm-6 col-xl-3">
             <div class="bg-secondary rounded d-flex align-items-center p-4">
                 <i class="fa fa-book-reader fa-3x text-danger"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Peminjaman Aktif</p>
-                    <h4 class="mb-0">{{ $peminjamanAktif }}</h4>
+                    <p class="mb-2">Total Buku Dipinjam</p>
+                    <h4 class="mb-0">{{ $totalDipinjam ?? 0 }}</h4>
                 </div>
             </div>
         </div>
 
-        {{-- TOTAL DENDA --}}
         <div class="col-sm-6 col-xl-3">
             <div class="bg-secondary rounded d-flex align-items-center p-4">
-                <i class="fa fa-money-bill-wave fa-3x text-danger"></i>
+                <i class="fa fa-clock fa-3x text-danger"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Total Denda</p>
-                    <h4 class="mb-0">
-                        Rp {{ number_format($totalDenda ?? 0, 0, ',', '.') }}
-                    </h4>
+                    <p class="mb-2">Masih Dipinjam</p>
+                    <h4 class="mb-0">{{ $masihDipinjam ?? 0 }}</h4>
                 </div>
             </div>
         </div>
@@ -66,23 +103,17 @@
     </div>
 
 
-    {{-- TABEL PEMINJAMAN TERBARU --}}
+    {{-- TABEL LAPORAN --}}
     <div class="row mt-4">
         <div class="col-12">
 
             <div class="bg-secondary rounded p-4">
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-
-                    <h5 class="mb-0">
-                        <i class="fa fa-book-open text-danger"></i>
-                        Peminjaman Terbaru
+                    <h5>
+                        <i class="fa fa-chart-bar text-danger"></i> 
+                        Tabel Laporan Peminjaman
                     </h5>
-
-                    <a href="{{ route('admin.peminjaman.index') }}" class="btn btn-danger btn-sm">
-                        <i class="fa fa-list"></i> Lihat Semua
-                    </a>
-
                 </div>
 
                 <div class="table-responsive">
@@ -97,13 +128,12 @@
                                 <th>Anggota</th>
                                 <th>Buku</th>
                                 <th>Status</th>
-                                <th width="120">Aksi</th>
                             </tr>
                         </thead>
 
                         <tbody>
 
-                            @forelse($peminjamanTerbaru as $item)
+                            @forelse($peminjamans as $item)
 
                                 <tr>
 
@@ -117,7 +147,7 @@
 
                                     <td>
                                         <span class="text-info">
-                                            PMJ-{{ str_pad($item->id_peminjaman, 4, '0', STR_PAD_LEFT) }}
+                                            PMJ-{{ str_pad($item->id_peminjaman,4,'0',STR_PAD_LEFT) }}
                                         </span>
                                     </td>
 
@@ -162,25 +192,13 @@
 
                                     </td>
 
-                                    <td>
-
-                                        <a 
-                                            href="{{ route('admin.peminjaman.show',$item->id_peminjaman) }}"
-                                            class="btn btn-info btn-sm">
-
-                                            <i class="fa fa-eye"></i> Detail
-
-                                        </a>
-
-                                    </td>
-
                                 </tr>
 
                             @empty
 
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">
-                                        Belum ada peminjaman
+                                    <td colspan="6" class="text-center text-muted">
+                                        Tidak ada data laporan
                                     </td>
                                 </tr>
 
