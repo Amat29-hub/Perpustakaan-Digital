@@ -3,64 +3,62 @@
 @section('content')
 
 <!-- ================= BILLBOARD ================= -->
-<section id="billboard">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-
-                <button class="prev slick-arrow">
-                    <i class="icon icon-arrow-left"></i>
-                </button>
-
-                <div class="main-slider pattern-overlay">
-
-                    <!-- SLIDE 1 -->
-                    <div class="slider-item">
-                        <div class="banner-content">
-                            <h2 class="banner-title">Laskar Pelangi</h2>
-                            <p>mengisahkan petualangan Raib, Seli, dan Ali ke Klan Matahari...</p>
-
-                            <div class="btn-wrap">
-                                <a href="#" class="btn btn-outline-accent btn-accent-arrow">
-                                    Read More
-                                    <i class="icon icon-ns-arrow-right"></i>
-                                </a>
-                            </div>
+<section id="hero" class="bg-light position-relative overflow-hidden py-5 py-lg-0">
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-center">
+            
+            <div class="col-lg-6 px-5 py-5 py-lg-8 order-2 order-lg-1">
+                <div class="hero-content-inner text-center text-lg-start">
+                    <span class="badge mb-4 py-2 px-3 text-uppercase fw-bold letter-spacing-2" style="background: rgba(44, 62, 80, 0.06); color: #2c3e50; font-size: 0.75rem;">Perpustakaan Digital</span>
+                    
+                    <h1 class="display-3 fw-black text-dark mb-4 mt-2">
+                        Pintu Menuju <br> 
+                        <span class="text-primary-modern">Dunia Imajinasi.</span>
+                    </h1>
+                    
+                    <p class="lead text-muted mb-5 pe-lg-5">
+                        Telusuri koleksi terbaik kami dari penulis dunia. Temukan inspirasi, pengetahuan, dan hiburan tanpa batas di mana saja, kapan saja.
+                    </p>
+                    
+                    <div class="hero-action-group d-flex flex-column flex-sm-row align-items-center justify-content-center justify-content-lg-start gap-3">
+                        <a href="#popular-books" class="btn btn-primary-modern btn-lg px-5 py-3">
+                            Temukan Buku <i class="icon icon-ns-arrow-right ms-2"></i>
+                        </a>
+                        <div class="user-proof d-flex align-items-center mt-3 mt-sm-0 ms-sm-3">
                         </div>
-
-                        <img src="{{ asset('assetsfrontend/images/main-banner1.jpg') }}" class="banner-image">
                     </div>
-
-                    <!-- SLIDE 2 -->
-                    <div class="slider-item">
-                        <div class="banner-content">
-                            <h2 class="banner-title">Birds gonna be Happy</h2>
-                            <p>Lorem ipsum dolor sit amet...</p>
-
-                            <div class="btn-wrap">
-                                <a href="#" class="btn btn-outline-accent btn-accent-arrow">
-                                    Read More
-                                    <i class="icon icon-ns-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <img src="{{ asset('assetsfrontend/images/main-banner2.jpg') }}" class="banner-image">
-                    </div>
+                    
 
                 </div>
-
-                <button class="next slick-arrow">
-                    <i class="icon icon-arrow-right"></i>
-                </button>
-
             </div>
+
+            <div class="col-lg-6 position-relative order-1 order-lg-2 h-100 min-vh-lg-80 overflow-hidden bg-primary-modern">
+                <div class="book-gallery-wrapper h-100 d-flex justify-content-center align-items-center p-5">
+                    
+                    <div class="book-card-main-group position-relative">
+                        
+                        <div class="book-card-item card-1 shadow-lg">
+                            <img src="{{ asset('assetsfrontend/images/main-banner1.jpg') }}" alt="Book 1">
+                        </div>
+                        
+                        <div class="book-card-item card-2 shadow floating-anim-1">
+                            <img src="{{ asset('assetsfrontend/images/tab-item1.jpg') }}" alt="Book 2">
+                        </div>
+                        
+                        <div class="book-card-item card-3 shadow-lg floating-anim-2">
+                            <img src="{{ asset('assetsfrontend/images/main-banner2.jpg') }}" alt="Book 3">
+                        </div>
+
+                    </div>
+                    
+                    <div class="bg-circle-decor"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
 
-<section id="billboard">
-    </section>
 
 <section id="popular-books" class="py-5 bg-light">
     <div class="container">
@@ -147,6 +145,139 @@
 </section>
 
 <style>
+
+    /* BILLBOARD/HERO */
+    #hero {
+        background: #ffffff;
+    }
+    .fw-black { font-weight: 900 !important; }
+    .text-primary-modern { color: #4361ee; }
+    .letter-spacing-2 { letter-spacing: 2px; }
+    
+    /* Button Modern */
+    .btn-primary-modern {
+        background: #4361ee;
+        color: white;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 10px 25px rgba(67, 97, 238, 0.25);
+    }
+    .btn-primary-modern:hover {
+        background: #3046c8;
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(67, 97, 238, 0.35);
+        color: white;
+    }
+    
+    /* Avatar Group */
+    .avatar-group img {
+        width: 40px;
+        height: 40px;
+        margin-right: -10px;
+    }
+    
+    /* Sisi Kanan: Gallery & Visual */
+    .min-vh-lg-80 { min-height: 80vh; }
+    .bg-primary-modern {
+        background: #fcfcfd; /* Ubah background untuk menghindari kesamaan warna */
+    }
+    
+    .book-card-main-group {
+        width: 400px;
+        height: 500px;
+    }
+    
+    .book-card-item {
+        position: absolute;
+        border-radius: 20px;
+        overflow: hidden;
+        background: white;
+        border: 8px solid white;
+        transition: 0.6s ease;
+    }
+    
+    .book-card-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* Card Posisi 1 (Utama) */
+    .card-1 {
+        width: 250px;
+        height: 350px;
+        top: 10%;
+        left: 10%;
+        z-index: 3;
+        transform: rotate(-3deg);
+    }
+    
+    /* Card Posisi 2 */
+    .card-2 {
+        width: 150px;
+        height: 200px;
+        bottom: 5%;
+        right: 5%;
+        z-index: 2;
+        transform: rotate(5deg);
+    }
+    
+    /* Card Posisi 3 */
+    .card-3 {
+        width: 200px;
+        height: 280px;
+        top: -5%;
+        right: 15%;
+        z-index: 1;
+        opacity: 0.8;
+        transform: rotate(10deg);
+    }
+    
+    /* Hover Effect on Group */
+    .book-card-main-group:hover .card-1 { transform: rotate(0deg) scale(1.03); z-index: 4; }
+    .book-card-main-group:hover .card-2 { transform: rotate(0deg) scale(1.05); }
+    .book-card-main-group:hover .card-3 { transform: rotate(0deg) scale(1.02); }
+    
+    /* Decorative Background */
+    .bg-circle-decor {
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(67, 97, 238, 0.05) 0%, transparent 70%);
+        z-index: -1;
+        top: -10%;
+        left: -10%;
+    }
+    
+    /* Animations */
+    .floating-anim-1 { animation: floating1 4s ease-in-out infinite; }
+    .floating-anim-2 { animation: floating2 6s ease-in-out infinite; }
+    
+    @keyframes floating1 {
+        0%, 100% { transform: translateY(0) rotate(5deg); }
+        50% { transform: translateY(-15px) rotate(5deg); }
+    }
+    
+    @keyframes floating2 {
+        0%, 100% { transform: translateY(0) rotate(10deg); }
+        50% { transform: translateY(-10px) rotate(10deg); }
+    }
+    
+    /* Quick Info Ribbon */
+    .info-item h4 { color: #2c3e50; }
+    .info-item p { color: #888; font-size: 0.8rem; }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 991px) {
+        .display-3 { font-size: 2.8rem; }
+        .book-card-main-group { width: 300px; height: 380px; }
+        .card-1 { width: 180px; height: 260px; left: 0%; top: 5%;}
+        .card-2 { width: 120px; height: 160px; right: 0%; }
+        .card-3 { width: 150px; height: 210px; top: 0%; right: 10%;}
+    }
+
     /* Search Bar */
     .custom-search-input {
         height: 60px;

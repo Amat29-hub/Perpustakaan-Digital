@@ -40,7 +40,6 @@ class HomeController extends Controller
     {
 
         $buku = Buku::where('id_buku',$id)
-                ->where('stok','>',0)
                 ->firstOrFail();
 
         $bukulain = Buku::where('id_buku','!=',$id)
@@ -49,7 +48,29 @@ class HomeController extends Controller
                     ->limit(5)
                     ->get();
 
-        return view('frontend.buku.detail', compact('buku','bukulain'));
+        /*
+        =========================================
+        HITUNG TOTAL PINJAMAN USER
+        =========================================
+        */
+
+        $totalPinjam = 0;
+
+        if(Auth::check()){
+
+            $anggota = Anggota::where('user_id',Auth::id())->first();
+
+            if($anggota){
+
+                $totalPinjam = Peminjaman::where('id_anggota',$anggota->id_anggota)
+                        ->whereIn('status',['menunggu','dipinjam','terlambat'])
+                        ->count();
+
+            }
+
+        }
+
+        return view('frontend.buku.detail', compact('buku','bukulain','totalPinjam'));
     }
 
 
@@ -61,30 +82,79 @@ class HomeController extends Controller
 
     public function pinjam($id)
     {
-    
+
+        if(!Auth::check()){
+            return redirect()->route('login');
+        }
+
         $buku = Buku::where('id_buku',$id)->firstOrFail();
-    
+
         if ($buku->stok <= 0) {
             return back()->with('error','Stok buku habis');
         }
-    
+
         $user = Auth::user();
-    
+
         $anggota = Anggota::where('user_id',$user->id)->first();
-    
+
         if (!$anggota) {
             return back()->with('error','Akun belum terdaftar sebagai anggota');
         }
-    
+
+
+        /*
+        ==================================
+        CEK MAKSIMAL 3 BUKU
+        ==================================
+        */
+
+        $jumlahPinjam = Peminjaman::where('id_anggota',$anggota->id_anggota)
+                        ->whereIn('status',['menunggu','dipinjam','terlambat'])
+                        ->count();
+
+        if($jumlahPinjam >= 3){
+            return back()->with('error','Maksimal peminjaman hanya 3 buku');
+        }
+
+
+        /*
+        ==================================
+        CEK BUKU YANG SAMA
+        ==================================
+        */
+
         $exists = Peminjaman::where('id_anggota',$anggota->id_anggota)
                     ->where('id_buku',$buku->id_buku)
                     ->whereIn('status',['menunggu','dipinjam','terlambat'])
                     ->exists();
         
         if ($exists) {
-            return back()->with('error','Anda sudah meminjam buku ini. Silakan kembalikan terlebih dahulu sebelum meminjam lagi.');
+            return back()->with('error','Anda sudah meminjam buku ini.');
         }
-    
+
+
+        /*
+        ==================================
+        CEK DENDA BELUM BAYAR
+        ==================================
+        */
+
+        $punyaDenda = Peminjaman::where('id_anggota',$anggota->id_anggota)
+                        ->where('denda','>',0)
+                        ->where('status_bayar','belum')
+                        ->exists();
+
+        if($punyaDenda){
+            return back()->with('error','Anda masih memiliki denda yang belum dibayar');
+        }
+
+
+        /*
+        ==================================
+        SIMPAN PEMINJAMAN
+        ==================================
+        */
+
         Peminjaman::create([
             'id_anggota' => $anggota->id_anggota,
             'id_petugas' => null,
@@ -94,9 +164,10 @@ class HomeController extends Controller
             'status' => 'menunggu',
             'denda' => 0
         ]);
-    
+
         return redirect()->route('buku.saya')
                 ->with('success','Peminjaman berhasil diajukan');
+
     }
 
 
@@ -120,9 +191,9 @@ class HomeController extends Controller
 
 
         /*
-        |--------------------------------------------------------------------------
-        | OTOMATIS UBAH STATUS TERLAMBAT
-        |--------------------------------------------------------------------------
+        ==================================
+        OTOMATIS STATUS TERLAMBAT
+        ==================================
         */
 
         Peminjaman::where('id_anggota',$anggota->id_anggota)
@@ -134,9 +205,9 @@ class HomeController extends Controller
 
 
         /*
-        |--------------------------------------------------------------------------
-        | DATA PEMINJAMAN
-        |--------------------------------------------------------------------------
+        ==================================
+        DATA PEMINJAMAN
+        ==================================
         */
 
         $menunggu = Peminjaman::with('buku')
@@ -189,34 +260,32 @@ class HomeController extends Controller
 
     public function bayarDenda(Request $request,$id)
     {
-    
+
         $user = Auth::user();
-    
+
         $anggota = Anggota::where('user_id',$user->id)->first();
-    
+
         if(!$anggota){
             return back()->with('error','Data anggota tidak ditemukan');
         }
-    
+
         $peminjaman = Peminjaman::where('id_peminjaman',$id)
             ->where('id_anggota',$anggota->id_anggota)
             ->where('status','terlambat')
             ->first();
-    
+
         if(!$peminjaman){
             return back()->with('error','Data peminjaman tidak ditemukan');
         }
-    
+
         $peminjaman->update([
-    
             'metode_bayar' => $request->metode_bayar,
             'status_bayar' => 'sudah',
-            'status' => 'dipinjam'   // ⬅️ ini yang penting
-    
+            'status' => 'dipinjam'
         ]);
-    
-        return back()->with('success','Denda berhasil dibayar, silahkan kembalikan buku');
-    
+
+        return back()->with('success','Denda berhasil dibayar');
+
     }
 
 
@@ -255,9 +324,7 @@ class HomeController extends Controller
         $denda = $peminjaman->denda;
 
         if ($telat > 0 && $denda == 0) {
-
             $denda = $telat * 2000;
-
         }
 
         $peminjaman->update([

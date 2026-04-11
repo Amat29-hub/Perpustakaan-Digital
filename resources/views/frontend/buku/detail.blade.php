@@ -2,6 +2,18 @@
 
 @section('content')
 
+@php
+$anggota = \App\Models\Anggota::where('user_id', auth()->id())->first();
+
+$jumlahPinjaman = 0;
+
+if($anggota){
+    $jumlahPinjaman = \App\Models\Peminjaman::where('id_anggota', $anggota->id_anggota)
+                        ->whereIn('status',['menunggu','dipinjam','terlambat'])
+                        ->count();
+}
+@endphp
+
 <div class="container detail-container" style="padding-top: 40px; padding-bottom: 80px;">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-transparent p-0 m-0">
@@ -55,10 +67,15 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 mt-4">
-                    <button class="btn btn-primary btn-lg px-5 rounded-pill fw-bold shadow-primary" 
-                            data-bs-toggle="modal" data-bs-target="#modalPinjam" 
-                            {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                        <button class="btn btn-primary btn-lg px-5 rounded-pill fw-bold shadow-primary" 
+                                data-bs-toggle="modal" data-bs-target="#modalPinjam" 
+                                {{ ($buku->stok <= 0 || $jumlahPinjaman >= 3) ? 'disabled' : '' }}>
                         <i class="icon icon-book-open me-2"></i> Pinjam Sekarang
+                        @if($jumlahPinjaman >= 3)
+                        <div class="text-danger small mt-2">
+                            Maksimal peminjaman hanya 3 buku
+                        </div>
+                        @endif
                     </button>
                     <a href="{{ url('/') }}" class="btn btn-outline-dark btn-lg px-4 rounded-pill">
                         <i class="icon icon-arrow-left me-2"></i> Kembali
